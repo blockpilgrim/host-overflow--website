@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Host Overflow - AI Restaurant Concierge for Peak Hours</title>
+        <meta
+            name="description"
+            content="Never miss a call during rush hours. AI backup that answers overflow calls, captures reservations, and transfers intelligently."
+        />
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Calendly -->
+        <link
+            href="https://assets.calendly.com/assets/external/widget.css"
+            rel="stylesheet"
+        />
+        <script
+            src="https://assets.calendly.com/assets/external/widget.js"
+            type="text/javascript"
+            async
+        ></script>
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --navy: #0f172a;
+                --navy-light: #1e293b;
+                --navy-lighter: #334155;
+                --teal: #06b6d4;
+                --teal-dark: #0891b2;
+                --orange: #f97316;
+                --gray: #64748b;
+                --gray-light: #cbd5e1;
+                --white: #ffffff;
+                --bg-gray: #f8fafc;
+            }
+
+            body {
+                font-family:
+                    "Inter",
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+                line-height: 1.6;
+                color: var(--navy);
+                background: var(--white);
+                -webkit-font-smoothing: antialiased;
+            }
+
+            /* Header */
+            header {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--gray-light);
+                z-index: 1000;
+            }
+
+            nav {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 1.25rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: var(--navy);
+                text-decoration: none;
+            }
+
+            .logo span {
+                color: var(--teal);
+            }
+
+            /* Hero Section */
+            .hero {
+                margin-top: 80px;
+                padding: 6rem 2rem 4rem;
+                text-align: center;
+                background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+            }
+
+            .hero-content {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+                font-weight: 800;
+                line-height: 1.1;
+                color: var(--navy);
+                margin-bottom: 1.5rem;
+                letter-spacing: -0.02em;
+            }
+
+            .hero h1 .highlight {
+                color: var(--teal);
+            }
+
+            .hero .subheadline {
+                font-size: 1.35rem;
+                color: var(--gray);
+                margin-bottom: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+            }
+
+            .hero .pilot-badge {
+                font-size: 0.95rem;
+                color: var(--navy);
+                margin-bottom: 2rem;
+                font-weight: 500;
+            }
+
+            .hero .pilot-badge strong {
+                color: var(--teal);
+                font-weight: 600;
+            }
+
+            .cta-primary {
+                display: inline-block;
+                background: var(--teal);
+                color: var(--white);
+                padding: 1rem 2.5rem;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);
+            }
+
+            .cta-primary:hover {
+                background: var(--teal-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 24px rgba(6, 182, 212, 0.4);
+            }
+
+            .hero-stats {
+                margin-top: 4rem;
+                display: flex;
+                justify-content: center;
+                gap: 4rem;
+                flex-wrap: wrap;
+            }
+
+            .stat {
+                text-align: center;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: var(--teal);
+                display: block;
+            }
+
+            .stat-label {
+                color: var(--gray);
+                font-size: 0.95rem;
+                margin-top: 0.25rem;
+            }
+
+            /* Section Base Styles */
+            section {
+                padding: 5rem 2rem;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: 4rem;
+            }
+
+            .section-header h2 {
+                font-size: 2.75rem;
+                font-weight: 700;
+                color: var(--navy);
+                margin-bottom: 1rem;
+                letter-spacing: -0.02em;
+            }
+
+            .section-header p {
+                font-size: 1.2rem;
+                color: var(--gray);
+                max-width: 700px;
+                margin: 0 auto;
+            }
+
+            /* Problem Section */
+            .problem {
+                background: var(--white);
+            }
+
+            .problem-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
+
+            .problem-card {
+                background: var(--bg-gray);
+                padding: 2rem;
+                border-radius: 12px;
+                border-left: 4px solid var(--orange);
+            }
+
+            .problem-card h3 {
+                font-size: 1.4rem;
+                font-weight: 600;
+                color: var(--navy);
+                margin-bottom: 1rem;
+            }
+
+            .problem-card p {
+                color: var(--gray);
+                line-height: 1.7;
+            }
+
+            .problem-highlight {
+                background: var(--navy);
+                color: var(--white);
+                padding: 2.5rem;
+                border-radius: 12px;
+                text-align: center;
+                margin-top: 3rem;
+            }
+
+            .problem-highlight p {
+                font-size: 1.4rem;
+                font-weight: 500;
+                line-height: 1.6;
+            }
+
+            .problem-highlight .emphasis {
+                color: var(--orange);
+                font-weight: 700;
+            }
+
+            /* Solution Section */
+            .solution {
+                background: linear-gradient(
+                    135deg,
+                    var(--navy) 0%,
+                    var(--navy-light) 100%
+                );
+                color: var(--white);
+            }
+
+            .solution .section-header h2,
+            .solution .section-header p {
+                color: var(--white);
+            }
+
+            .solution-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 4rem;
+                align-items: center;
+            }
+
+            .solution-text h3 {
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+                color: var(--teal);
+            }
+
+            .solution-text p {
+                font-size: 1.1rem;
+                line-height: 1.8;
+                margin-bottom: 1.5rem;
+                color: var(--gray-light);
+            }
+
+            .solution-visual {
+                background: var(--navy-lighter);
+                border-radius: 12px;
+                padding: 3rem;
+                text-align: center;
+            }
+
+            .solution-visual .icon-placeholder {
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 2rem;
+                background: linear-gradient(
+                    135deg,
+                    var(--teal) 0%,
+                    var(--teal-dark) 100%
+                );
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+            }
+
+            /* Features Section */
+            .features {
+                background: var(--bg-gray);
+            }
+
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 2.5rem;
+            }
+
+            .feature-card {
+                background: var(--white);
+                padding: 2.5rem;
+                border-radius: 12px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            }
+
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(
+                    135deg,
+                    var(--teal) 0%,
+                    var(--teal-dark) 100%
+                );
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .feature-card h3 {
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: var(--navy);
+                margin-bottom: 1rem;
+            }
+
+            .feature-card p {
+                color: var(--gray);
+                line-height: 1.7;
+            }
+
+            /* How It Works Section */
+            .how-it-works {
+                background: var(--white);
+            }
+
+            .steps {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 3rem;
+                margin-top: 3rem;
+            }
+
+            .step {
+                text-align: center;
+                position: relative;
+            }
+
+            .step-number {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(
+                    135deg,
+                    var(--teal) 0%,
+                    var(--teal-dark) 100%
+                );
+                color: var(--white);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                font-weight: 700;
+                margin: 0 auto 1.5rem;
+            }
+
+            .step h3 {
+                font-size: 1.4rem;
+                font-weight: 600;
+                color: var(--navy);
+                margin-bottom: 1rem;
+            }
+
+            .step p {
+                color: var(--gray);
+                line-height: 1.7;
+            }
+
+            /* CTA Section */
+            .cta-section {
+                background: linear-gradient(
+                    135deg,
+                    var(--teal) 0%,
+                    var(--teal-dark) 100%
+                );
+                color: var(--white);
+                text-align: center;
+                padding: 5rem 2rem;
+            }
+
+            .cta-section h2 {
+                font-size: 2.75rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+            }
+
+            .cta-section p {
+                font-size: 1.3rem;
+                margin-bottom: 2.5rem;
+                opacity: 0.95;
+            }
+
+            .cta-secondary {
+                display: inline-block;
+                background: var(--white);
+                color: var(--teal);
+                padding: 1rem 2.5rem;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            }
+
+            .cta-secondary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Footer */
+            footer {
+                background: var(--navy);
+                color: var(--gray-light);
+                padding: 3rem 2rem 2rem;
+                text-align: center;
+            }
+
+            footer p {
+                margin-bottom: 0.5rem;
+            }
+
+            footer a {
+                color: var(--teal);
+                text-decoration: none;
+            }
+
+            footer a:hover {
+                text-decoration: underline;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .hero h1 {
+                    font-size: 2.5rem;
+                }
+
+                .hero .subheadline {
+                    font-size: 1.1rem;
+                }
+
+                .hero-stats {
+                    gap: 2rem;
+                }
+
+                .stat-number {
+                    font-size: 2rem;
+                }
+
+                .section-header h2 {
+                    font-size: 2rem;
+                }
+
+                .section-header p {
+                    font-size: 1.05rem;
+                }
+
+                .solution-content {
+                    grid-template-columns: 1fr;
+                }
+
+                .cta-section h2 {
+                    font-size: 2rem;
+                }
+
+                .cta-section p {
+                    font-size: 1.1rem;
+                }
+
+                nav {
+                    padding: 1rem 1.5rem;
+                }
+
+                .logo {
+                    font-size: 1.25rem;
+                }
+            }
+
+            /* Smooth scroll */
+            html {
+                scroll-behavior: smooth;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Header -->
+        <header>
+            <nav>
+                <a href="#" class="logo">Host<span>Overflow</span></a>
+                <a
+                    href=""
+                    onclick="Calendly.initPopupWidget({url: 'https://calendly.com/leroi-hostoverflow'});return false;"
+                    class="cta-primary"
+                    style="padding: 0.75rem 1.75rem; font-size: 0.95rem"
+                    >Book a Demo</a
+                >
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>
+                    Never Miss a Call During
+                    <span class="highlight">Peak Hours</span>
+                </h1>
+                <p class="subheadline">
+                    AI backup that answers overflow calls when your hosts are
+                    busy. Capture reservations, answer questions naturally, and
+                    transfer intelligently—all while protecting the hospitality
+                    experience.
+                </p>
+                <p class="pilot-badge">
+                    <strong
+                        >Now enrolling pilot restaurants for the holiday
+                        season.</strong
+                    >
+                </p>
+                <a
+                    href=""
+                    onclick="Calendly.initPopupWidget({url: 'https://calendly.com/leroi-hostoverflow'});return false;"
+                    class="cta-primary"
+                    >Book a Demo</a
+                >
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">$500-1K</span>
+                        <span class="stat-label"
+                            >Lost daily from missed calls</span
+                        >
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3 rings</span>
+                        <span class="stat-label">Guest-first delay</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">5 min</span>
+                        <span class="stat-label">Setup time</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="problem">
+            <div class="container">
+                <div class="section-header">
+                    <h2>The Impossible Choice</h2>
+                    <p>
+                        During rush hours, your hosts face an impossible
+                        decision: greet the guest in front of them or answer the
+                        ringing phone.
+                    </p>
+                </div>
+
+                <div class="problem-grid">
+                    <div class="problem-card">
+                        <h3>Missed Revenue</h3>
+                        <p>
+                            5-10 missed calls per rush = $500-1,000 in lost
+                            reservations every single day. These aren't
+                            spam—they're people ready to book.
+                        </p>
+                    </div>
+                    <div class="problem-card">
+                        <h3>Poor Guest Experience</h3>
+                        <p>
+                            Whether you choose to answer the phone or greet the
+                            in-person guest, someone gets a subpar experience.
+                        </p>
+                    </div>
+                    <div class="problem-card">
+                        <h3>Staff Burnout</h3>
+                        <p>
+                            Your hosts are juggling too much. The constant
+                            pressure of choosing between competing priorities
+                            creates stress and turnover.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="problem-highlight">
+                    <p>
+                        Every missed call during peak hours is
+                        <span class="emphasis"
+                            >potential revenue walking away</span
+                        >—right when your team is most valuable greeting
+                        in-person guests.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Section -->
+        <section class="solution">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Overflow-First AI Backup</h2>
+                    <p>
+                        We don't replace your hosts. We back them up during peak
+                        hours.
+                    </p>
+                </div>
+
+                <div class="solution-content">
+                    <div class="solution-text">
+                        <h3>Answers What It Can. Escalates What It Should.</h3>
+                        <p>
+                            Our AI picks up after 3 rings when your hosts are
+                            busy. It handles common questions naturally—hours,
+                            location, menu details—and sends reservation links
+                            via SMS.
+                        </p>
+                        <p>
+                            But unlike competitors who try to automate
+                            everything, we know when human judgment matters.
+                            Questions about allergens, special requests, or
+                            anything requiring expertise? We transfer
+                            intelligently with full context.
+                        </p>
+                        <p>
+                            The result: You capture revenue from overflow calls
+                            while protecting the hospitality experience your
+                            guests expect.
+                        </p>
+                    </div>
+                    <div class="solution-visual">
+                        <div class="icon-placeholder">📞</div>
+                        <p style="font-size: 1.1rem; color: var(--gray-light)">
+                            Natural conversation.<br />
+                            Smart escalation.<br />
+                            Zero missed opportunities.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Built for Real Restaurants</h2>
+                    <p>
+                        Everything you need to capture overflow calls during
+                        your busiest hours.
+                    </p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">⏱️</div>
+                        <h3>Guest-First Timing</h3>
+                        <p>
+                            Answers after 3 rings only—giving your hosts
+                            priority to pick up when available. Your guests
+                            always come first.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <h3>Natural Conversation</h3>
+                        <p>
+                            No robotic phone trees. Guests speak naturally and
+                            get helpful answers about hours, location, menu, and
+                            reservations.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>SMS Reservation Links</h3>
+                        <p>
+                            Captures reservation interest by texting OpenTable
+                            or Resy links directly to guests. Simple, fast,
+                            effective.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3>Smart Transfers</h3>
+                        <p>
+                            Intelligently routes complex questions to your staff
+                            with full context. No frustrating dead-ends for
+                            guests.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">⚠️</div>
+                        <h3>Safe Allergen Handling</h3>
+                        <p>
+                            Configurable approach to sensitive questions.
+                            Transfer mode or guided responses with
+                            disclaimers—you choose.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Simple Dashboard</h3>
+                        <p>
+                            View call logs, read transcripts, and track key
+                            metrics. See exactly how many calls you're
+                            capturing.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <h2>How It Works</h2>
+                    <p>Get up and running in minutes, not weeks.</p>
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Quick Setup</h3>
+                        <p>
+                            Enter your restaurant details, hours, menu basics,
+                            and reservation link. Takes less than 15 minutes.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Test & Deploy</h3>
+                        <p>
+                            Make a test call to experience it yourself. When
+                            you're ready, we route overflow calls to the AI.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Capture Revenue</h3>
+                        <p>
+                            During peak hours, every call gets answered. Watch
+                            missed calls drop and reservations increase.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA Section -->
+        <section class="cta-section" id="demo">
+            <div class="container">
+                <h2>Ready to Stop Missing Calls?</h2>
+                <p>
+                    See how Host Overflow can capture more revenue during your
+                    busiest hours.
+                </p>
+                <a
+                    href=""
+                    onclick="Calendly.initPopupWidget({url: 'https://calendly.com/leroi-hostoverflow'});return false;"
+                    class="cta-secondary"
+                    >Book a Demo</a
+                >
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <p>&copy; 2024 Host Overflow. All rights reserved.</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem">
+                    <a href="mailto:hello@hostoverflow.com"
+                        >hello@hostoverflow.com</a
+                    >
+                </p>
+            </div>
+        </footer>
+    </body>
+</html>
